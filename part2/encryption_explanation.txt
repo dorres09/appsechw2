@@ -1,0 +1,9 @@
+Encrypted database models
+	By using django-cryptography, database fields are encrypted with API method. In models.py, the following fields are encrypted: product_name, product_image_path, recommended_price, description, amount, and fp. For example, product_name = models.CharField(max_length=50, unique=True) is replaced with product_name = encrypt(models.CharField(max_length=50, unique=True)).
+	
+Proper key management
+	By using django-environ, key is stored in the memory and is loaded as an environment variable for security. It should keep the key externally and flexible for admin. 
+	In settings.py, import environ is added to use django-environ. 
+	env = environ.Env() is added for initialization. 
+	envirion.Env.read_env() is added for reading the .env file. 
+	SECRET_KEY = env("SECRET KEY") is added to read the key. 
