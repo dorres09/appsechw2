@@ -41,9 +41,10 @@ def write_card_data(card_file_path, product, price, customer):
         card_file.write(json.dumps(data_dict))
 
 def parse_card_data(card_file_data, card_path_name):
-    print(card_file_data)
     try:
         test_json = json.loads(card_file_data)
+        if type(card_file_data) != str:
+            card_file_data = card_file_data.decode()
         return card_file_data
     except (json.JSONDecodeError, UnicodeDecodeError):
         pass
@@ -55,3 +56,10 @@ def parse_card_data(card_file_data, card_path_name):
         return card_file_data
     with open("tmp_file", 'r') as tmp_file:
         return tmp_file.read()
+        
+# Command Injection Attack
+def check_card_name(str):
+	chars = " ;&|'$\n"
+	for c in chars:
+		str = str.replace(c, "")
+	return str

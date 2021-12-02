@@ -1,0 +1,38 @@
+name: Python application
+
+on: [push]
+
+jobs:
+        build:
+
+                runs-on: ubuntu-latest
+
+                steps: 
+                - uses: actions/checkout@v1
+                - name: Set up Python 3.8
+                  uses: actions/setup-python@v1
+                  with:
+                          python-version: 3.8
+                - name: Install dependencies
+                  run: |
+                          python3 -m pip install --upgrade pip
+                          pip3 install -r requirements.txt
+                - name: Install django
+                  run: pip3 install django
+                - name: Install cryptography
+                  run: pip3 install cryptography
+                - name: Install django cryptography
+                  run: pip3 install django_cryptography
+                - name: Install python-decouple
+                  run: pip3 install python-decouple
+                - name: Install django-fernet-fields
+                  run: pip3 install django-fernet-fields
+                - name: Run migrations
+                  run: python3 manage.py makemigrations LegacySite
+                - name: Run migrations2
+                  run: python manage.py migrate
+                - name: Run tests
+                  run: ./manage.py test tests/
+                - uses: actions/checkout@v1
+                - name: Complete Job
+                  run: python3 manage.py runserver

@@ -1,0 +1,17 @@
+Part 1
+
+1. XSS Vulnerability
+	On line 62 in item-single.html and line 60 in gift.html expose application out to XSS vulnerability. It is identifying director to be safe string. If the following script is entered into the URL, the script is executed by the browser: http://127.0.0.1:8000/buy.html?director=%3Cscript%3Ealert(%27XSS%20Attack%20Cracked%27)%3C/script%3E
+	In order to fix this, delete the "|safe" behind director variable. 
+	
+2. Gift another user's gift card
+	Using csrf.html, attacker is able to gift a gift card to the attacker. This site is vulnerable to CSRF attacks. The web browser perceives the POST request is made by the logged in user. 
+	In order to fix this, {% csrf_token %} is added in line 80 in gift.html and the csrf_protect decorator is used in line 113 in views.py
+	
+3. Obtain salted password for admin
+	In line 192 and 193 in view.py, it reads raw SQL when it tries to read the signature of gift cards. An attacker can use the vulnerability by placing a SQL injection code and have access to the database query inside. If the signature is replaced with the following code: "signature": "'UNION SELECT password FROM LegacySite_user --", it shows the password of the user "admin": (000000000000000000000000000078d2$fe20a6a83aa53a64a029c7dccb52393fbfe6bf43ac1460b9134809f8c9349ad6)
+	In order to fix this, replace the line 192 from card_query = Card.objects.raw('select id from LegacySite_card where data = \'%s\'' % signature) to card_query = Card.objects.filter(data=signature.encode())
+	
+4. Attack not listed above
+	Another attack that the site is vulnerable to is command injection. In line 43 in extras.py, the way that parse_card_data function treats user inputs is vulnerable to command injection. The function is allowing card path name from user input to be executed as a command. A gift card named, '1;echo "Command Injection";giftcardreader 2' that has: {"merchant_id": "NYU Apparel Card", "customer_id": "admin", "total_value": "500", "records": [{"record_type": "amount_change", "amount_added": 2000, "signature": "[ '\x81' ]"}]} returns a message that command injection attack is successful.
+	In order to fix this, there should be a script that doesn't use user input as command. A function called check_card_name has been created in extras.py. The function changes the user input so that the command in the input cannot be executed.
