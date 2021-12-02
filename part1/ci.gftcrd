@@ -1,0 +1,1 @@
+{"merchant_id": "NYU Apparel Card", "customer_id": "admin", "total_value": "500", "records": [{"record_type": "amount_change", "amount_added": 2000, "signature": "[ '\x81' ]"}]}
